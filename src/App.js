@@ -8,34 +8,48 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredPosts, setFilteredPosts] = useState([]);
 
+  useEffect(()=>{
+    fetch("https://dummyjson.com/posts")
+    .then(res=>res.json())
+    .then(data=>{setPost(data.posts);})
+  },[])
 
-useEffect(()=>{
-  fetch("https://dummyjson.com/posts")
-  .then(res=>res.json())
-  .then(data=>{setPost(data.posts);})
-},[])
-
-
-
-const handleFilter = () => {
-  const toFilter = post.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  setFilteredPosts(toFilter);
-};
-
+  const handleFilter = () => {
+    const toFilter = post.filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredPosts(toFilter);
+    if (toFilter.length === 0) {
+      alert("no match found");
+    }    
+  };
 
   return (
     <div className="App">
-      <button onClick={()=> console.log(filteredPosts)}> Boton </button>
-        <Filter searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        handleFilter={handleFilter}/>
+      <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} handleFilter={handleFilter} />
+      {/* <button onClick={() => console.log(filteredPosts)}> Boton </button> */}
       <ul>
-        <li onClick={()=>console.log(post)}>casa</li>
-        {filteredPosts.map((item, index) => {
-          return <li key={index}><h1>{item.title}</h1>{item.body}</li>;
-        })}
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((item, index) => {
+            return (
+              <>
+                <h1>{item.title}</h1>
+                <li key={index}>{item.body}</li>
+                
+              </>
+            )
+          })
+        )
+        : (
+          post.map((item, index) => {
+            return (
+              <>
+                <h1>{item.title}</h1>
+                <li key={index}>{item.body}</li>;
+              </>
+            )
+          })
+        )}
       </ul>
     </div>
   );
@@ -45,10 +59,20 @@ export default App;
 
 const Filter= ({ searchTerm, setSearchTerm, handleFilter })=>{
   return <>
-<input type="text" onChange={(e)=>{setSearchTerm(e.target.value);console.log(searchTerm);}}/>
+<input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}}/>
 <button onClick={()=>{handleFilter()}}>Filter</button>
   </>
 }
+
+
+
+
+
+
+
+
+
+      
  
   
 
